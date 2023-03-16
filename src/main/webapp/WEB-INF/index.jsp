@@ -12,7 +12,7 @@ pageEncoding="UTF-8"%>
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Project Name here</title>
+    <title>Login and Registration</title>
     <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <!-- change to match your file/naming structure -->
@@ -28,7 +28,7 @@ pageEncoding="UTF-8"%>
   </head>
   <body>
     <div class="d-flex p-3 mb-2 border-bottom border-4 border-dark">
-      <h1 class="p-0 m-0">Welcome!</h1>
+      <h1 class="p-0 m-0">Login and Registration</h1>
     </div>
     <div class="p-4 row gx-4" id="main-body">
       <div class="col">
@@ -39,7 +39,7 @@ pageEncoding="UTF-8"%>
             action="/user/new"
             class="mt-2"
             method="POST"
-            modelAttribute="newUser"
+            modelAttribute="user"
           >
             <div class="d-flex mb-3 align-items-center">
               <form:label
@@ -54,7 +54,12 @@ pageEncoding="UTF-8"%>
                 path="userName"
                 name="userName"
               />
-              <form:errors path="userName"></form:errors>
+            </div>
+            <div class="mb-3">
+              <form:errors
+                path="userName"
+                class="text-danger mb-3"
+              ></form:errors>
             </div>
             <div class="d-flex mb-3 align-items-center">
               <form:label for="email" path="email" class="form-label col-2"
@@ -66,7 +71,9 @@ pageEncoding="UTF-8"%>
                 path="email"
                 name="email"
               />
-              <form:errors path="email"></form:errors>
+            </div>
+            <div class="mb-3">
+              <form:errors path="email" class="text-danger mb-3"></form:errors>
             </div>
             <div class="d-flex mb-3 align-items-center">
               <form:label
@@ -81,7 +88,12 @@ pageEncoding="UTF-8"%>
                 path="password"
                 name="password"
               />
-              <form:errors path="password"></form:errors>
+            </div>
+            <div class="mb-3">
+              <form:errors
+                path="password"
+                class="text-danger mb-3"
+              ></form:errors>
             </div>
             <div class="d-flex mb-3 align-items-center">
               <form:label for="confirm" path="confirm" class="form-label col-2"
@@ -93,7 +105,12 @@ pageEncoding="UTF-8"%>
                 path="confirm"
                 name="confirm"
               />
-              <form:errors path="confirm"></form:errors>
+            </div>
+            <div class="mb-3">
+              <form:errors
+                path="password"
+                class="text-danger mb-3"
+              ></form:errors>
             </div>
             <div class="d-flex justify-content-end">
               <button class="btn btn-primary px-4">Register</button>
@@ -108,7 +125,7 @@ pageEncoding="UTF-8"%>
           <form:form
             action="/login/new"
             method="POST"
-            modelAttribute="newLogin"
+            modelAttribute="loginUser"
             class="mt-2"
           >
             <div class="d-flex mb-3 align-items-center">
@@ -136,7 +153,12 @@ pageEncoding="UTF-8"%>
                 path="password"
                 name="password"
               />
-              <form:errors path="password"></form:errors>
+            </div>
+            <div class="mb-3">
+              <form:errors
+                path="password"
+                class="text-danger mb-3"
+              ></form:errors>
             </div>
             <div class="d-flex justify-content-end">
               <button class="btn btn-primary px-4">Login</button>

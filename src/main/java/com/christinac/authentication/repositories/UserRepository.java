@@ -14,5 +14,5 @@ public interface UserRepository extends CrudRepository<User, Long>{
 	@Override
 	public List<User> findAll();
 	
-	Optional<User> findyByEmail(String email);
+	public Optional<User> findByEmail(String email);
 }

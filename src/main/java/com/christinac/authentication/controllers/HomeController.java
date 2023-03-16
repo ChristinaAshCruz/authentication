@@ -22,41 +22,57 @@ public class HomeController {
 	private UserService userServ;
 	
 	@GetMapping("/")
-	public String index(Model model) {
-		model.addAttribute("newUser", new User());
-		model.addAttribute("newLogin", new LoginUser());
+	public String index(Model model, HttpSession session) {
+		session.setAttribute("userId", null);
+		model.addAttribute("user", new User());
+		model.addAttribute("loginUser", new LoginUser());
 		return "index.jsp";
 	}
 	
-	//register new user
+	// DASHBOARD
+	@GetMapping("/dashboard")
+	public String dashboard(Model model, HttpSession session) {
+		if (session.getAttribute("userId") == null) {
+			return "redirect:/";
+		} else {
+			Long id = (Long) session.getAttribute("userId");
+			User loggedUser = userServ.findByID(id);
+			model.addAttribute("user", loggedUser);
+			return "dashboard.jsp";
+		}
+	}
+	
+	// LOGIN USER
+	@PostMapping("/login/new")
+	public String login(@Valid @ModelAttribute("loginUser") LoginUser loginUser, BindingResult result, Model model, HttpSession session) {
+		User user = userServ.login(loginUser, result);
+		if (user == null) {
+			model.addAttribute("user", new User());
+			return "index.jsp";	
+		}
+		session.setAttribute("userId", user.getId());
+		return "redirect:/dashboard";
+	}
+	
+	//REGISTERING USER
 	@PostMapping("/user/new")
-	public String register(@Valid @ModelAttribute("newUser") User newUser, BindingResult result, Model model, HttpSession session) {
-		if(result.hasErrors()) {
-			model.addAttribute("newLogin", new LoginUser());
+	public String register(@Valid @ModelAttribute("user") User user, BindingResult result, Model model, HttpSession session) {
+		// run register method
+		User newUser = userServ.register(user, result);
+		if(newUser == null) {
+			model.addAttribute("loginUser", new LoginUser());
 			return "index.jsp";
 		} else {
-			userServ.register(newUser, result);
+			session.setAttribute("userId", newUser.getId());
 			return "redirect:/dashboard";
 		}
 	}
 	
-	//login user
-	@PostMapping("/login")
-    public String login(@Valid @ModelAttribute("newLogin") LoginUser newLogin, 
-            BindingResult result, Model model, HttpSession session) {
-        
-        // Add once service is implemented:
-        // User user = userServ.login(newLogin, result);
-    
-        if(result.hasErrors()) {
-            model.addAttribute("newUser", new User());
-            return "index.jsp";
-        }
-    
-        // No errors! 
-        // TO-DO Later: Store their ID from the DB in session, 
-        // in other words, log them in.
-    
-        return "redirect:/home";
-    }
+	// LOGOUT USER
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		session.setAttribute("userId", null);
+		return "redirect:/";
+	}
+	
 }

@@ -18,71 +18,50 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepo;
 	
-	public List<User> findAll(){
+	// finding all the users
+	public List<User> find() {
 		return userRepo.findAll();
 	}
-	// find user by id
-	public User findById(Long id) {
-		Optional<User> optionalUser = userRepo.findById(id);
-		if (optionalUser.isPresent()) {
-			return optionalUser.get();
-		} else {
+	
+	public User register(User u, BindingResult result) {
+		// if the confirmPassword != password
+		Optional<User> optionalUser = userRepo.findByEmail(u.getEmail());
+		if(optionalUser.isPresent()) {
+			result.rejectValue("email", null, "Your email is already taken!");
+		}
+		if(!u.getConfirm().equals(u.getPassword())) {
+			// add error to your confirPassword input in your jsp
+			result.rejectValue("confirm", null, "Passwords do not match!");
+		}
+		if (result.hasErrors()) {
 			return null;
 		}
-	}
-	
-//	// create new user
-//	public User create(User u) {
-//		return userRepo.save(u);
-//	}
-
-	//register and login methods
-	public User register(User newUser, BindingResult result) {
-		// add validations here
-		
-		// TO-DO - Reject values or register if no errors:
-		// Reject if password doesn't match confirmation
-        if(!newUser.getPassword().equals(newUser.getConfirm())) {
-        	result.rejectValue("confirm", null, "Your passwords do not match!");
-        }
-        // Reject if email is taken (present in database)
-        Optional<User> potentialUser = userRepo.findyByEmail(newUser.getEmail());
-        if(potentialUser.isPresent()) {
-        	result.rejectValue("email", null, "This email is already taken!");
-        }
-        // Return null if result has errors
-        if (result.hasErrors()) {
-        	return null;
-        }
-        // Hash and set password, save user to database
-        String hashPW = BCrypt.hashpw(newUser.getPassword(), BCrypt.gensalt());
-        newUser.setPassword(hashPW);
-		return userRepo.save(newUser);
-	}
-	
-	public User login(LoginUser newLoginObject, BindingResult result) {
-		// add validations here
-		// TO-DO - Reject values:
-		
-    	// Find user in the DB by email
-        // Reject if NOT present
-        
-        // Reject if BCrypt password match fails
-    
-        // Return null if result has errors
-        // Otherwise, return the user object
-		return null;
-	}
-	
-	
-	// update user info
-	public User update(User u) {
+		String hashPW = BCrypt.hashpw(u.getPassword(), BCrypt.gensalt());
+		u.setPassword(hashPW);
 		return userRepo.save(u);
 	}
 	
-	// delete user by id
-	public void deleteUserById(Long id) {
-		userRepo.deleteById(id);
+	
+	public User login(LoginUser l, BindingResult result) {
+		Optional<User> optionalUser = userRepo.findByEmail(l.getEmail());
+		// if the optionalUser is empty OR if  the check password fails -> return null
+		if (optionalUser.isEmpty() || !BCrypt.checkpw(l.getPassword(), optionalUser.get().getPassword())){
+			result.rejectValue("password", null, "Incorrect email or password!");
+			return null;
+		} else {
+		// ELSE -> return the user object 
+			return optionalUser.get();
+		}
+		
+	}
+	
+	public User findByID(Long id) {
+		Optional<User> optUser = userRepo.findById(id);
+		if (optUser.isEmpty()) {
+			return null;
+		} else {
+			return optUser.get();
+		}
 	}
 }
 	
